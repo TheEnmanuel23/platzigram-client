@@ -113,3 +113,38 @@ test('listPicturesByTag', async t => {
 
   t.deepEqual(images, result)
 })
+
+test('saveUser', async t => {
+  const client = t.context.client
+
+  let user = fixtures.getUser()
+
+  let newUser = {
+    username: user.username,
+    name: user.name,
+    email: 'user@platzigram.test',
+    password: 'pl4tzi'
+  }
+
+  nock(options.endpoints.users)
+  .post('/', newUser)
+  .reply(201, user)
+
+  let result = await client.saveUser(newUser)
+
+  t.deepEqual(user, result)
+})
+
+test('getUser', async t => {
+  const client = t.context.client
+
+  let user = fixtures.getUser()
+
+  nock(options.endpoints.users)
+    .get(`/${user.username}`)
+    .reply(200, user)
+
+  let result = await client.getUser(user.username)
+
+  t.deepEqual(user, result)
+})
